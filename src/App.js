@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  defer,
+} from "react-router-dom";
+import { LoginPage } from "./pages/Login";
+import { HomePage } from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import { AnalyticsPage } from "./pages/Analytics";
+import { ProtectedLayout } from "./components/ProtectedLayout";
+import { HomeLayout } from "./components/HomeLayout";
+import "./styles.css";
+import { AuthLayout } from "./components/AuthLayout";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+// ideally this would be an API call to server to get logged in user data
+
+const getUserData = () =>
+  new Promise((resolve) =>
+    setTimeout(() => {
+      const user = window.localStorage.getItem("user");
+      resolve(user);
+    }, 3000)
   );
-}
 
-export default App;
+// for error
+// const getUserData = () =>
+//   new Promise((resolve, reject) =>
+//     setTimeout(() => {
+//       reject("Error");
+//     }, 3000)
+//   );
+
+export const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route
+      element={<AuthLayout />}
+      loader={() => defer({ userPromise: getUserData() })}
+    >
+      <Route element={<HomeLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Route>
+
+      <Route path="/" element={<ProtectedLayout />}>
+        <Route path="Dashboard" element={<Dashboard />} />
+        <Route path="Analytics" element={<AnalyticsPage />} />
+      </Route>
+    </Route>
+  )
+);
