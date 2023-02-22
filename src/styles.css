@@ -30,8 +30,30 @@
 
 .App-link {
   color: #61dafb;
+  
+}
+.HomeBack{
+  background: url(../public/Images/Indus.jpg);
+  background-repeat: no-repeat;
+  height: 39em;
+  background-position: center;
+  background-size: cover;
+}
+.HomeHeading{
+  color: white;
+  text-align: center;
+  font-size: 3rem;
 }
 
+@media screen and (max-width: 480px) {
+ .HomeHeading {
+  font-size: 1.5rem;
+  }
+  .HomeBack{
+    height: 30em;
+   
+  }
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -1,6 +1,7 @@
-import { BasicPage } from "../components/BasicPage";
-import Home from "@mui/icons-material/Home";
-
 export const HomePage = () => {
-  return <BasicPage title="Home Page" icon={<Home />} />;
+  return (
+    <div className="HomeBack">
+      <h1 className="HomeHeading">Please Login to visit Dashboard</h1>
+    </div>
+  );
 };

@@ -19,7 +19,7 @@ export const LoginPage = () => {
     const data = new FormData(event.currentTarget);
     login({
       username: data.get("username"),
-      password: data.get("password")
+      password: data.get("password"),
     });
   };
 
@@ -30,7 +30,7 @@ export const LoginPage = () => {
           marginTop: 8,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
@@ -68,7 +68,6 @@ export const LoginPage = () => {
           >
             Login In
           </Button>
-         
         </Box>
       </Box>
     </Container>

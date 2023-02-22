@@ -21,6 +21,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
   CategoryScale,
@@ -69,131 +70,152 @@ var tempnamehighD;
 
 export const AnalyticsPage = () => {
   const [Sales, setSales] = useState();
+  const navigate = useNavigate();
   var group = [];
   useEffect(() => {
-    var config1 = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "https://test.indusgame.com/sales",
-      headers: {
-        Authorization: `Bearer ${window.localStorage.getItem("accessToken")}`,
-      },
-    };
+    const fetchData = () => {
+      var config1 = {
+        method: "get",
+        maxBodyLength: Infinity,
+        url: "https://test.indusgame.com/sales",
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("accessToken")}`,
+        },
+      };
 
-    axios(config1)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        setSales(response.data);
-        response.data.map(function (d) {
-          Date.push(d.date);
-          d.packs.map((e) => {
-            if (e.id === "back_from_the_dead_01") {
-              back_from_the_dead_01.push(e.quantity);
-            } else {
-              back_from_the_dead_01.push(0);
-            }
-            if (e.id === "rise_of_the_dead_01") {
-              rise_of_the_dead_01.push(e.quantity);
-            } else {
-              rise_of_the_dead_01.push(0);
-            }
-            if (e.id === "the_undead_mob_01") {
-              the_undead_mob_01.push(e.quantity);
-            } else {
-              the_undead_mob_01.push(0);
-            }
-            if (e.id === "the_kings_army_01") {
-              the_kings_army_01.push(e.quantity);
-            } else {
-              the_kings_army_01.push(0);
-            }
-            if (e.id === "kingsmen_skirmishers_01") {
-              kingsmen_skirmishers_01.push(e.quantity);
-            } else {
-              kingsmen_skirmishers_01.push(0);
-            }
-            if (e.id === "medieval_mayhem_01") {
-              medieval_mayhem_01.push(e.quantity);
-            } else {
-              medieval_mayhem_01.push(0);
-            }
+      axios(config1)
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+          setSales(response.data);
+          response.data.map(function (d) {
+            Date.push(d.date);
+            d.packs.map((e) => {
+              if (e.id === "back_from_the_dead_01") {
+                back_from_the_dead_01.push(e.quantity);
+              } else {
+                back_from_the_dead_01.push(0);
+              }
+              if (e.id === "rise_of_the_dead_01") {
+                rise_of_the_dead_01.push(e.quantity);
+              } else {
+                rise_of_the_dead_01.push(0);
+              }
+              if (e.id === "the_undead_mob_01") {
+                the_undead_mob_01.push(e.quantity);
+              } else {
+                the_undead_mob_01.push(0);
+              }
+              if (e.id === "the_kings_army_01") {
+                the_kings_army_01.push(e.quantity);
+              } else {
+                the_kings_army_01.push(0);
+              }
+              if (e.id === "kingsmen_skirmishers_01") {
+                kingsmen_skirmishers_01.push(e.quantity);
+              } else {
+                kingsmen_skirmishers_01.push(0);
+              }
+              if (e.id === "medieval_mayhem_01") {
+                medieval_mayhem_01.push(e.quantity);
+              } else {
+                medieval_mayhem_01.push(0);
+              }
+            });
           });
+
+          response.data.map((data) => {
+            var groupObj = data.packs.reduce(
+              (r, { id, quantity }) => ((r[id] = (r[id] || 0) + quantity), r),
+              {}
+            );
+            group = Object.keys(groupObj).map((key) => ({
+              id: key,
+              quantity: groupObj[key],
+            }));
+          });
+          console.log(group, "test");
+
+          var tmp;
+          var tmpD;
+
+          for (var i = group.length - 1; i >= 0; i--) {
+            tmp = group[i].quantity;
+            if (group[i].id === "kingsmen_skirmishers_01") {
+              var tmpD = group[i].quantity * 4.99;
+            }
+            if (group[i].id === "the_undead_mob_01") {
+              var tmpD = group[i].quantity * 4.99;
+            }
+            if (group[i].id === "medieval_mayhem_01") {
+              var tmpD = group[i].quantity * 9.99;
+            }
+            if (group[i].id === "back_from_the_dead_01") {
+              var tmpD = group[i].quantity * 4.99;
+            }
+            if (group[i].id === "the_kings_army_01") {
+              var tmpD = group[i].quantity * 24.99;
+            }
+
+            if (tmpD < lowestD) {
+              lowestD = tmpD;
+              tempnamelowD = group[i].id;
+            }
+            if (tmpD > highestD) {
+              highestD = tmpD;
+              tempnamehighD = group[i].id;
+            }
+
+            if (tmp < lowest) {
+              lowest = tmp;
+              tempnamelow = group[i].id;
+            }
+            if (tmp > highest) {
+              highest = tmp;
+              tempnamehigh = group[i].id;
+            }
+          }
+          console.log(highest, tempnamehigh, "and", lowest, tempnamelow);
+          console.log(highestD, tempnamehighD, "and", lowestD, tempnamelowD);
+        })
+        .catch(function (error) {
+          console.log(error, "error in fetch table data");
+          var data = JSON.stringify({
+            refreshToken: window.localStorage.getItem("refreshToken"),
+          });
+
+          var config = {
+            method: "post",
+            maxBodyLength: Infinity,
+            url: "https://test.indusgame.com/auths",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            data: data,
+          };
+
+          axios(config)
+            .then(function (response) {
+              console.log("refreshed");
+              console.log(JSON.stringify(response.data));
+              window.localStorage.setItem(
+                "accessToken",
+                response.data.accessToken
+              );
+
+              window.localStorage.setItem(
+                "refreshToken",
+                response.data.refreshToken
+              );
+              fetchData();
+            })
+            .catch(function (error) {
+              localStorage.removeItem("user");
+              navigate("/", { replace: true });
+              console.log(error);
+            });
         });
-
-        response.data.map((data) => {
-          var groupObj = data.packs.reduce(
-            (r, { id, quantity }) => ((r[id] = (r[id] || 0) + quantity), r),
-            {}
-          );
-          group = Object.keys(groupObj).map((key) => ({
-            id: key,
-            quantity: groupObj[key],
-          }));
-        });
-        console.log(group, "test");
-
-        var tmp;
-        var tmpD;
-
-        for (var i = group.length - 1; i >= 0; i--) {
-          tmp = group[i].quantity;
-          if (group[i].id === "kingsmen_skirmishers_01") {
-            var tmpD = group[i].quantity * 4.99;
-          }
-          if (group[i].id === "the_undead_mob_01") {
-            var tmpD = group[i].quantity * 4.99;
-          }
-          if (group[i].id === "medieval_mayhem_01") {
-            var tmpD = group[i].quantity * 9.99;
-          }
-          if (group[i].id === "back_from_the_dead_01") {
-            var tmpD = group[i].quantity * 4.99;
-          }
-          if (group[i].id === "the_kings_army_01") {
-            var tmpD = group[i].quantity * 24.99;
-          }
-
-          if (tmpD < lowestD) {
-            lowestD = tmpD;
-            tempnamelowD = group[i].id;
-          }
-          if (tmpD > highestD) {
-            highestD = tmpD;
-            tempnamehighD = group[i].id;
-          }
-
-          if (tmp < lowest) {
-            lowest = tmp;
-            tempnamelow = group[i].id;
-          }
-          if (tmp > highest) {
-            highest = tmp;
-            tempnamehigh = group[i].id;
-          }
-        }
-        console.log(highest, tempnamehigh, "and", lowest, tempnamelow);
-        console.log(highestD, tempnamehighD, "and", lowestD, tempnamelowD);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "https://test.indusgame.com/packs",
-      headers: {
-        Authorization: `Bearer ${window.localStorage.getItem("accessToken")}`,
-      },
     };
-
-    axios(config)
-      .then(function (response) {
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    fetchData();
   }, []);
   const labels = Date;
   const data = {
