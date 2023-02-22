@@ -19,9 +19,8 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import axios from "axios";
 import Alert from "@material-ui/lab/Alert";
-import Avatar from '@mui/material/Avatar';
-
-
+import Avatar from "@mui/material/Avatar";
+import { useNavigate } from "react-router-dom";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -47,22 +46,20 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-
 function Dashboard() {
+  const navigate = useNavigate();
   var columns = [
     { title: "id", field: "id" },
     {
       title: "Avatar",
-      render: (rowData) => (
-        <Avatar alt="Remy Sharp" src={rowData.imageUrl} />
-      ),
+      render: (rowData) => <Avatar alt="Remy Sharp" src={rowData.imageUrl} />,
     },
-    { title: "Name", field: "name" ,editable: 'never', },
-    { title: "Description", field: "description", editable: 'never',},
-    { title: "ability", field: "ability.name" ,editable: 'never',},
-    { title: "Type", field: "type",editable: 'never', },
-    { title: "Role", field: "role" , editable: 'never',},
-    { title: "Faction", field: "faction",editable: 'never', },
+    { title: "Name", field: "name", editable: "never" },
+    { title: "Description", field: "description", editable: "never" },
+    { title: "ability", field: "ability.name", editable: "never" },
+    { title: "Type", field: "type", editable: "never" },
+    { title: "Role", field: "role", editable: "never" },
+    { title: "Faction", field: "faction", editable: "never" },
     { title: "Qoulity", field: "quality" },
     { title: "Health", field: "health" },
     { title: "AttackType", field: "attackType" },
@@ -72,8 +69,6 @@ function Dashboard() {
     { title: "movementSpeedType", field: "movementSpeedType" },
     { title: "spawnCost", field: "spawnCost" },
     { title: "spawnCooldownInSeconds", field: "spawnCooldownInSeconds" },
-  
-  
   ];
   const [data, setData] = useState([]); //table data
 
@@ -82,98 +77,92 @@ function Dashboard() {
   const [errorMessages, setErrorMessages] = useState([]);
 
   useEffect(() => {
-   
     const fetchData = () => {
-      var qs = require('qs');
-    var data = qs.stringify({
-       
-    });
-    var config = {
-      method: 'get',
-    maxBodyLength: Infinity,
-      url: 'https://test.indusgame.com/units',
-      headers: { 
-        'Authorization': `Bearer ${window.localStorage.getItem("accessToken")}`
-      },
-      data : data
-    };
-    
-    axios(config)
-    .then(function (response) {
-     
-      setData(response.data);
-    })
-    .catch(function (error) {
-      console.log(error, "error in fetch table data");
-      var data = JSON.stringify({
-        refreshToken:  window.localStorage.getItem("refreshToken"),
-      
-      });
-
+      var qs = require("qs");
+      var data = qs.stringify({});
       var config = {
-        method: "post",
+        method: "get",
         maxBodyLength: Infinity,
-        url: "https://test.indusgame.com/auths",
+        url: "https://test.indusgame.com/units",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem("accessToken")}`,
         },
         data: data,
       };
 
       axios(config)
         .then(function (response) {
-       console.log("refreshed");   
-          console.log(JSON.stringify(response.data));
-          window.localStorage.setItem(
-            "accessToken",
-            response.data.accessToken
-          );
-
-          window.localStorage.setItem(
-            "refreshToken",
-            response.data.accessToken
-          );
-          fetchData();
+          setData(response.data);
         })
         .catch(function (error) {
-          console.log(error);
+          console.log(error, "error in fetch table data");
+          var data = JSON.stringify({
+            refreshToken: window.localStorage.getItem("refreshToken"),
+          });
+
+          var config = {
+            method: "post",
+            maxBodyLength: Infinity,
+            url: "https://test.indusgame.com/auths",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            data: data,
+          };
+
+          axios(config)
+            .then(function (response) {
+              console.log("refreshed");
+              console.log(JSON.stringify(response.data));
+              window.localStorage.setItem(
+                "accessToken",
+                response.data.accessToken
+              );
+
+              window.localStorage.setItem(
+                "refreshToken",
+                response.data.refreshToken
+              );
+              fetchData();
+            })
+            .catch(function (error) {
+              localStorage.removeItem("user");
+              navigate("/", { replace: true });
+              console.log(error);
+            });
         });
-   
-    });  
-    }
+    };
     fetchData();
-    
   }, []);
 
   const handleRowUpdate = (newData, oldData, resolve) => {
     //validation
-    let errorList = []; 
+    let errorList = [];
     console.log(newData);
     if (errorList.length < 1) {
-       
-var config = {
-  method: 'patch',
+      var config = {
+        method: "patch",
 
-maxBodyLength: Infinity,
-  url: `https://test.indusgame.com/units/${newData.id}`,
-  headers: { 
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpIjoiYWJoaXNoZWsua2FsZSIsImV4cCI6MTY3NzA1NTIxMywiaXNzIjoiaSIsImF1ZCI6ImkifQ._1jY6ij1eqTg7_ZIbdQqYJLCfDWZcNlHVc4znVy5U8M', 
-    'Content-Type': 'application/json'
-  },
-  data :{
-    "id": newData.id,
-    "quality": newData.quality,
-    "health": newData.health,
-    "attack": newData.attack,
-    "maxTargetCount": newData.maxTargetCount,
-    "spawnCost": newData.spawnCost,
-    "spawnCooldownInSeconds": newData.spawnCooldownInSeconds
-  }
-};
+        maxBodyLength: Infinity,
+        url: `https://test.indusgame.com/units/${newData.id}`,
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+        },
+        data: {
+          id: newData.id,
+          quality: newData.quality,
+          health: newData.health,
+          attack: newData.attack,
+          maxTargetCount: newData.maxTargetCount,
+          spawnCost: newData.spawnCost,
+          spawnCooldownInSeconds: newData.spawnCooldownInSeconds,
+        },
+      };
 
-axios(config)
-        
-        axios(config)
+      axios(config);
+
+      axios(config)
         .then((res) => {
           const dataUpdate = [...data];
           const index = oldData.tableData.id;
@@ -194,7 +183,7 @@ axios(config)
       resolve();
     }
   };
-// code can be use to add units
+  // code can be use to add units
   // const handleRowAdd = (newData, resolve) => {
   //   //validation
   //   let errorList = [];
@@ -250,9 +239,8 @@ axios(config)
   // };
 
   return (
-    <div className="App" style={{margin:"1rem"}}>
+    <div className="App" style={{ margin: "1rem" }}>
       <Grid container spacing={1}>
-    
         <Grid item xs={12}>
           <div>
             {iserror && (
@@ -273,11 +261,9 @@ axios(config)
                 new Promise((resolve) => {
                   handleRowUpdate(newData, oldData, resolve);
                 }),
-          
             }}
           />
         </Grid>
-      
       </Grid>
     </div>
   );
