@@ -2,16 +2,27 @@ import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+// const signalR = require("@microsoft/signalr");
 
 export const LoginPage = () => {
+  // let connection = new signalR.HubConnectionBuilder()
+  //   .withUrl("https://test.indusgame.com/hubs/unit")
+  //   .build();
+
+  // connection.on("send", (data) => {
+  //   console.log(data);
+  // });
+
+  // connection.start().then(() => connection.invoke("send", "Hello"));
+
+  //Error
+  // Access to XMLHttpRequest at 'https://test.indusgame.com/hubs/unit/negotiate?negotiateVersion=1' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.
+
   const { login } = useAuth();
 
   const handleSubmit = (event) => {

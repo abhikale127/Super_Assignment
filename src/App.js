@@ -23,14 +23,6 @@ const getUserData = () =>
     }, 3000)
   );
 
-// for error
-// const getUserData = () =>
-//   new Promise((resolve, reject) =>
-//     setTimeout(() => {
-//       reject("Error");
-//     }, 3000)
-//   );
-
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route

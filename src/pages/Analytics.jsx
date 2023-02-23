@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BasicPage } from "../components/BasicPage";
-import Settings from "@mui/icons-material/Settings";
 import axios from "axios";
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Grid } from "@material-ui/core";
-import { colors } from "@mui/material";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -20,7 +15,6 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
 import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
@@ -123,7 +117,7 @@ export const AnalyticsPage = () => {
             });
           });
 
-          response.data.map((data) => {
+          Sales.map((data) => {
             var groupObj = data.packs.reduce(
               (r, { id, quantity }) => ((r[id] = (r[id] || 0) + quantity), r),
               {}
@@ -141,19 +135,19 @@ export const AnalyticsPage = () => {
           for (var i = group.length - 1; i >= 0; i--) {
             tmp = group[i].quantity;
             if (group[i].id === "kingsmen_skirmishers_01") {
-              var tmpD = group[i].quantity * 4.99;
+              tmpD = group[i].quantity * 4.99;
             }
             if (group[i].id === "the_undead_mob_01") {
-              var tmpD = group[i].quantity * 4.99;
+              tmpD = group[i].quantity * 4.99;
             }
             if (group[i].id === "medieval_mayhem_01") {
-              var tmpD = group[i].quantity * 9.99;
+              tmpD = group[i].quantity * 9.99;
             }
             if (group[i].id === "back_from_the_dead_01") {
-              var tmpD = group[i].quantity * 4.99;
+              tmpD = group[i].quantity * 4.99;
             }
             if (group[i].id === "the_kings_army_01") {
-              var tmpD = group[i].quantity * 24.99;
+              tmpD = group[i].quantity * 24.99;
             }
 
             if (tmpD < lowestD) {

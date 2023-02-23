@@ -11,11 +11,6 @@ export const AuthProvider = ({ children, userData }) => {
   const navigate = useNavigate();
 
   const login = async (data) => {
-    // var data = JSON.stringify({
-    //   username: "abhishek.kale",
-    //   password: "TVpX7HSZ5J3679j1LOjJswjbZr0HPl0S",
-    // });
-
     var config = {
       method: "post",
       maxBodyLength: Infinity,
