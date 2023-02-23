@@ -117,7 +117,7 @@ export const AnalyticsPage = () => {
             });
           });
 
-          Sales.map((data) => {
+          response.data.map((data) => {
             var groupObj = data.packs.reduce(
               (r, { id, quantity }) => ((r[id] = (r[id] || 0) + quantity), r),
               {}
